@@ -6,7 +6,7 @@ from bson.objectid import ObjectId
 app = Flask(__name__)
 
 # MongoDB setup
-mongo_uri = os.getenv('MONGO_URI', 'mongodb+srv://gpt-history:tCJee3CuMdP0Fa12@chat-history.fcmptqd.mongodb.net/?retryWrites=true&w=majority&appName=chat-history')
+mongo_uri = os.getenv('MONGO_URI', 'mongodb://localhost:27017/')
 client = MongoClient(mongo_uri)
 db = client[os.getenv('MONGO_DB', 'chat-history')]
 messages_collection = db['messages']  # Replace 'messages' with your collection name
