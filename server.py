@@ -6,9 +6,9 @@ from bson.objectid import ObjectId
 app = Flask(__name__)
 
 # MongoDB setup
-mongo_uri = os.getenv('MONGO_URI', 'mongodb://localhost:27017/')
+mongo_uri = os.getenv('MONGO_URI', 'mongodb+srv://gpt-history:tCJee3CuMdP0Fa12@chat-history.fcmptqd.mongodb.net/?retryWrites=true&w=majority&appName=chat-history')
 client = MongoClient(mongo_uri)
-db = client[os.getenv('MONGO_DB', 'default_db_name')]
+db = client[os.getenv('MONGO_DB', 'chat-history')]
 messages_collection = db['messages']  # Replace 'messages' with your collection name
 
 @app.route('/save_message', methods=['POST'])
@@ -36,5 +36,22 @@ def update_rating(message_id):
         return jsonify({'error': 'Message not found'}), 404
     return jsonify({'status': 'success'}), 200
 
+@app.route('/get_all_messages', methods=['GET'])
+def get_all_messages():
+    try:
+        # Fetch all messages from the database
+        messages = list(messages_collection.find())
+        for message in messages:
+            message['_id'] = str(message['_id'])  # Convert ObjectId to string for JSON serialization
+        return jsonify({'status': 'success', 'messages': messages}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
+    # Test MongoDB connection
+    try:
+        client.admin.command('ping')
+        print("MongoDB connected successfully.")
+    except Exception as e:
+        print("MongoDB connection failed:", str(e))
     app.run(debug=True)
