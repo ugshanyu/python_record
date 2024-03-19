@@ -21,12 +21,13 @@ def save_message():
     messages_collection.insert_one(data)
     return jsonify({'status': 'success'}), 201
 
-@app.route('/update_rating/<message_id>', methods=['POST'])
-def update_rating(message_id):
+@app.route('/update_rating', methods=['POST'])
+def update_rating():
     data = request.json
     # Validate the incoming data
-    if 'rating' not in data:
-        return jsonify({'error': 'Missing required field: rating'}), 400
+    if 'rating' not in data or 'message_id' not in data:
+        return jsonify({'error': 'Missing required fields'}), 400
+    message_id = data['message_id']
     # Update the message with the given rating
     result = messages_collection.update_one(
         {'id': message_id},
